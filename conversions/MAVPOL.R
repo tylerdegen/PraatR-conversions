@@ -1,49 +1,40 @@
 library("PraatR")
+library(jsonlite)
 
+#Sets fullpath of the file for R consistency
 FullPath = function(FileName){
-#DataDirectory = "C:/Users/MyUsername/Desktop/Tutorial/"
-#DataDirectory = "E:/praatR/Tutorial/"
 DataDirectory = "/home/degen/Desktop/PRScripts/"
 #TODO find where I set it in the praat tutorial on SYSdev
 return( paste(DataDirectory,FileName,sep="") )
-} # End function
+}
 
 
 #get variables as arguments: filename, datafile, female, plain
 #TODO: These are just default values
-#filename <- "t111.u220TOt116.u220"
 filename <- "t143.u189.TO.t148.u189"
 datafile <- "female"
 sex <- "female"
 guise <- "plain"
+
+
 #set acoustic parameters
-topFormant <- 0
+topFormant <- 5500
 
 #NOTE: else must be on same line as closing bracket } of if{}
 if (sex == "female"){
-topFormant <- 5500
+    topFormant <- 5500
 } else if (sex == "male"){
-topFormant <- 5000
+    topFormant <- 5000
 }
 
 # Put the headers on the formant file
-#TODO: OH WHAT I CAN DO IS JUST MAKE THE HEADER A VECTOR AND THEN PASTE IT WITH sep=\t
-#AND THEN I CAN GET NUMBER OF COLUMNS WITH length()
 if (guise == "spanish"){
-#TODO: does the header of the excel file read \t from R as tab$ from praat? newline$ -> \n?
-#header$ = "guise" + tab$ + "soundlabel" + tab$ + "start" + tab$ + "end" +  tab$ + "precedingSegment"+  tab$ + "followingSegment"+  tab$ + "f1" + tab$ + "f2" + newline$
-#header <- "guise\tsoundlabel\tstart\tend\tprecedingSegment\tfollowingSegment\tf1\tf2\n"
-#TODO: \n needed at end for newline??
-header<- c("guise", "soundlabel", "start", "end", "precedingSegment", "followingSegment", "f1", "f2")
+    header<- c("guise", "soundlabel", "start", "end", "precedingSegment", "followingSegment", "f1", "f2")
 } else if (guise == "spanish_plain"){
 #TODO: is this just the same as guise==spanish??
-#header$ = "guise" + tab$ + "soundlabel" + tab$ + "start" + tab$ + "end" +  tab$ + "precedingSegment"+  tab$ + "followingSegment"+  tab$ + "f1" + tab$ + "f2" + newline$
-#header <- "guise\tsoundlabel\tstart\tend\tprecedingSegment\tfollowingSegment\tf1\tf2\n"
-header<- c("guise", "soundlabel", "start", "end", "precedingSegment", "followingSegment", "f1", "f2")
+    header<- c("guise", "soundlabel", "start", "end", "precedingSegment", "followingSegment", "f1", "f2")
 } else {
-#header$ = "guise" + tab$ + "soundlabel" + tab$ + "start" + tab$ + "end" +  tab$ + "precedingSegment"+  tab$ + "followingSegment"+  tab$ + "f1" + tab$ + "f2" + tab$ + "word"+ newline$
-#header <- "guise\tsoundlabel\tstart\tend\tprecedingSegment\tfollowingSegment\tf1\tf2\tword\n"
-header <- c("guise", "soundlabel", "start", "end", "precedingSegment", "followingSegment", "f1", "f2", "word")
+    header <- c("guise", "soundlabel", "start", "end", "precedingSegment", "followingSegment", "f1", "f2", "word")
 }
 columns <- length(header)
 #TODO: error if zero length header?
@@ -61,34 +52,23 @@ write.table(header, file=filename_fortable, append=FALSE, quote = TRUE, sep="\t"
 
 
 # Get the files
-#TODO: need to read in the textgrids and rename them
 
 toread <- paste(filename, ".TextGrid", sep="")
-#TODO: renames toread to 'item' in object window -- what do we do with this?
 
 toread <- paste(filename, ".wav", sep="")
-#TODO: renames toread to 'item' in object window -- what do we do with this??
 
 #### Praat doesn't like periods in names, so they will appear as underscores in object names
 name <- gsub("[.]", "_", filename)
-soundname <- "Sound item"
-#textgridname <- "TextGrid item"
+#TODO: is the sound just the original file? or something more praat specific, ie "Create Sound as Tone"
+soundname <- paste(filename, ".wav", sep="")
 textgridname <- paste(filename, ".TextGrid", sep="")
-#formantname <- "Formant item"
-formantname <- "tmp.formant"
+formantname <- paste(filename, ".formant", sep="")
 
 # Create the formant objects
-#this is gonna be so killer when it works
-#HANG ON I THINK INPUT IS THE FILE IT'S WORKING ON AND ARGUMENTS ARE WHAT IT DOES TO IT
-#YEAH THAT'S IT WOO
-#TODO: what's this business about renaming the stuff to "item", cause right now
-#TODO: (cont) I'm just getting the original filename in here
-#overwrite = TRUE
-praat( "To Formant (burg)...", input=FullPath(toread), output=FullPath("tmp.formant"), arguments=list(0,5,topFormant,0.025,50), overwrite=TRUE)
+praat( "To Formant (burg)...", input=FullPath(toread), output=FullPath(formantname), arguments=list(0,5,topFormant,0.025,50), overwrite=TRUE)
 
 
 # Extract the data
-#input will be textgridname
 #arguments can't be "", " ", or contain "__". so be careful with soundlabel and wordlabel
 numberofsegments <- praat("Get number of intervals...", input=FullPath(textgridname), arguments=list(1))
 i <- 1
@@ -105,21 +85,17 @@ for(i in 1:numberofsegments){
         
         #parse et and st for the actual value of the seconds
         etparse <- as.numeric(gsub("[^[:digit:].]", "\\1", et))
-        #print(etparse)
         stparse <- as.numeric(gsub("[^[:digit:].]", "\\1", st))
-        #print(stparse)
-        mid <- stparse + (etparse - stparse)/ 2
-        #print(mid)
+        mid <- stparse + (etparse - stparse)/2
         
         
 		#"Get label of interval...", textgrid name, args=(2, mid)
         #mid needs to be whole number?
         round(mid)
-        cat("mid: ", mid, "\n")
         #TODO: Praat doesn't like that the first time through tries to use a values less than 1, maybe put this line down by if i < numberofsegments?
 		j <- praat("Get label of interval...", input=FullPath(textgridname), arguments=list(2,mid))
         cat("J: ", j, "\n")
-        #TODO: I think this one doesn't like wordlabel being a string? come back to this one
+        #TODO: I think this one doesn't like wordlabel being a string and therefore crashes? come back to this one
         #wordlabel <- praat("Get label of interval...", input=FullPath(textgridname), arguments=list(2,j))
 		
 		precedingsegment <- "NA"
