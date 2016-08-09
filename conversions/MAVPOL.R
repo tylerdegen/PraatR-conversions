@@ -144,12 +144,12 @@ for(i in 1:numberofsegments){
         #TODO: just make it f1 and f2 instead of f1parse and f2parse
         #truncate f1 to hundreths precision
         if (f1 != "--undefined--" || "NA"){
-            f1parse <- as.numeric(gsub("[^[:digit:].]", "\\1", f1))
-            f1parse <- round(f1, digits=2)
+            f1 <- as.numeric(gsub("[^[:digit:].]", "\\1", f1))
+            f1 <- round(f1, digits=2)
         }
         if (f2 != "--undefined--" || "NA"){
-            f2parse <- as.numeric(gsub("[^[:digit:].]", "\\1", f2))
-            f2parse <- round(f1, digits=2)
+            f2 <- as.numeric(gsub("[^[:digit:].]", "\\1", f2))
+            f2 <- round(f1, digits=2)
         }
 
         #no good way to comment out code in R so going to use if(FALSE)
@@ -162,11 +162,11 @@ for(i in 1:numberofsegments){
         
         #TODO: Change line to row or column
 		if (guise == "spanish"){
-            line <- c(guise, soundlabel, stparse, etparse, precedingsegment, followingsegment, f1parse, f2parse)
+            line <- c(guise, soundlabel, stparse, etparse, precedingsegment, followingsegment, f1, f2)
 		} else if (guise == "spanish_plain"){
-            line <- c(guise, soundlabel, stparse, etparse, precedingsegment, followingsegment, f1parse, f2parse)
+            line <- c(guise, soundlabel, stparse, etparse, precedingsegment, followingsegment, f1, f2)
 		} else {
-            line <- c(guise, soundlabel, stparse, etparse, precedingsegment, followingsegment, f1parse, f2parse, wordlabel)
+            line <- c(guise, soundlabel, stparse, etparse, precedingsegment, followingsegment, f1, f2, wordlabel)
 		}
         
         #end if false
