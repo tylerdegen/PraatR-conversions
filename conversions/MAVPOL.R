@@ -3,7 +3,7 @@ library(jsonlite)
 
 #Sets fullpath of the file for R consistency
 FullPath = function(FileName){
-DataDirectory = "/home/degen/Desktop/PRScripts/"
+DataDirectory = "/home/degen/projects/PraatR-conversions/conversions/"
 #TODO find where I set it in the praat tutorial on SYSdev
 return( paste(DataDirectory,FileName,sep="") )
 }
@@ -48,7 +48,8 @@ columns <- length(header)
 header_mt <- as.matrix(t(columns))
 
 filename_fortable <- FullPath(datafile)
-write.table(header, file=filename_fortable, append=FALSE, quote = TRUE, sep="\t", row.names=FALSE, col.names=FALSE)
+#TODO: Will we need something header esque for the JSON database?
+#write.table(header, file=filename_fortable, append=FALSE, quote = TRUE, sep="\t", row.names=FALSE, col.names=FALSE)
 
 
 # Get the files
@@ -175,10 +176,12 @@ for(i in 1:numberofsegments){
 		#TODO: appendFileLine(datafile, line)
         #write(line, file=FullPath(datafile), append = TRUE, sep="\t", ncol=columns)
         filename_fortable <- FullPath(datafile)
-        write.table(line, file=filename_fortable, append=TRUE, quote = TRUE, sep="\t", eol="\n", row.names=FALSE, col.names=FALSE)
+        JSONline <- toJSON(line)
+        #write.table(line, file=filename_fortable, append=TRUE, quote = TRUE, sep="\t", eol="\n", row.names=FALSE, col.names=FALSE)
         #change write.table to something that writes as just a line
         #or just instead of printing to file, create a dataframe with these columns, and then each line is a row in the dataframe
         #then write.table the whole dataframe and it should come out
+        cat(JSONline, file=FullPath(datafile), fill=TRUE, append=TRUE)
 		
 	}
 }

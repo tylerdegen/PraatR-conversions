@@ -1,0 +1,3 @@
+source("/home/degen/projects/PraatR-conversions/conversions/MAVPOL.R")
+ls
+ls()
