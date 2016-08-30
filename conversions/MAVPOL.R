@@ -50,7 +50,8 @@ header_mt <- as.matrix(t(columns))
 filename_fortable <- FullPath(datafile)
 #TODO: Will we need something header esque for the JSON database?
 #write.table(header, file=filename_fortable, append=FALSE, quote = TRUE, sep="\t", row.names=FALSE, col.names=FALSE)
-
+JSONheader <- toJSON(header)
+cat(JSONheader, file=FullPath(datafile), fill=TRUE, append=FALSE)
 
 # Get the files
 
