@@ -21,7 +21,7 @@ do ("Read from file...", gridfile$)
 do("Rename...", "grid")
 
 selectObject("Sound sound")
-do("To Pitch (ac)...", 0, 75, 15, 1, 0.03, 0.45, 0.01, 0.35, 0.14, 600)
+do("To Pitch (ac)...", 0, 75, 15, “yes”, 0.03, 0.45, 0.01, 0.35, 0.14, 600)
 
 
 

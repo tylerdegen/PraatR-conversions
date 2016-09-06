@@ -45,7 +45,7 @@ columns <- length(header)
 #write(header, file=FullPath(datafile), append = FALSE, sep="\t", ncol=columns)
 
 #need to transpose and convert to matrix
-header_mt <- as.matrix(t(columns))
+#header_mt <- as.matrix(t(columns))
 
 filename_fortable <- FullPath(datafile)
 #TODO: Will we need something header esque for the JSON database?
@@ -55,6 +55,7 @@ cat(JSONheader, file=FullPath(datafile), fill=TRUE, append=FALSE)
 
 # Get the files
 
+#TODO this is redundant, I think it's safe to replace ln71 toread with soundname BUT will wait til I can isolate the change
 toread <- paste(filename, ".TextGrid", sep="")
 
 toread <- paste(filename, ".wav", sep="")
@@ -65,9 +66,14 @@ name <- gsub("[.]", "_", filename)
 soundname <- paste(filename, ".wav", sep="")
 textgridname <- paste(filename, ".TextGrid", sep="")
 formantname <- paste(filename, ".formant", sep="")
+pitchname <- paste(filename, ".pitch", sep="")
 
 # Create the formant objects
 praat( "To Formant (burg)...", input=FullPath(toread), output=FullPath(formantname), arguments=list(0,5,topFormant,0.025,50), overwrite=TRUE)
+
+#Create the pitch objects
+#praat("To Pitch (ac)...", input=FullPath(toread), output=FullPath(pitchname), arguments=list(0, 75, 15, 1, 0.03, 0.45, 0.01, 0.35, 0.14, 600))
+praat( "To Pitch (ac)...", input=FullPath(toread), output=FullPath(pitchname), arguments=list(0, 75, 15, "yes", 0.03, 0.45, 0.01, 0.35, 0.14, 600), overwrite=TRUE)
 
 
 # Extract the data
