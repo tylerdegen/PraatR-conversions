@@ -29,12 +29,12 @@ if (sex == "female"){
 
 # Put the headers on the formant file
 if (guise == "spanish"){
-    header<- c("guise", "soundlabel", "start", "end", "precedingSegment", "followingSegment", "f1", "f2")
+    header<- c("guise", "soundlabel", "start", "end", "precedingSegment", "followingSegment", "f1", "f2", "meanPitch", "minPitch", "maxPitch")
 } else if (guise == "spanish_plain"){
 #TODO: is this just the same as guise==spanish??
-    header<- c("guise", "soundlabel", "start", "end", "precedingSegment", "followingSegment", "f1", "f2")
+    header<- c("guise", "soundlabel", "start", "end", "precedingSegment", "followingSegment", "f1", "f2", "meanPitch", "minPitch", "maxPitch")
 } else {
-    header <- c("guise", "soundlabel", "start", "end", "precedingSegment", "followingSegment", "f1", "f2", "word")
+    header <- c("guise", "soundlabel", "start", "end", "precedingSegment", "followingSegment", "f1", "f2", "meanPitch", "minPitch", "maxPitch", "word")
 }
 columns <- length(header)
 #TODO: error if zero length header?
@@ -85,7 +85,7 @@ wordlabel <- ""
 for(i in 1:numberofsegments){
 	#command is "Get label of interval...", input is textgridname, arguments is list(1, i)
 	soundlabel <- praat("Get label of interval...", input=FullPath(textgridname), arguments=list(1, i))
-	if ( nchar(soundlabel) < 2){
+	if ( nchar(soundlabel) > 2){
 		#"Get start point..." on textgridname, args=1, i
 		st <- praat("Get start point...", input=FullPath(textgridname), arguments=list(1,i))
 		#"Get end point..." same deal
@@ -125,6 +125,8 @@ for(i in 1:numberofsegments){
 		}
 		
         
+        #FORMANT EXTRACTION
+        
 		#selected object is now formant name...might be worth just making that a variable?
         f1 <- praat("Get value at time...", input=FullPath(formantname), arguments=list(1, mid, "Hertz", "Linear"))
         f2 <- praat("Get value at time...", input=FullPath(formantname), arguments=list(2, mid, "Hertz", "Linear"))
@@ -163,18 +165,26 @@ for(i in 1:numberofsegments){
         #no good way to comment out code in R so going to use if(FALSE)
         #if (FALSE){
             #begin if false
+            
+        #PITCH EXTRACTION
+		meanPitch <- praat("Get mean...", input=FullPath(pitchname), arguments=list(stparse, etparse, "Hertz"))
+		#IT WORKS, IT STILL IS STRING WITH Hz AT END BUT IT WORKS
+		#print(meanPitch)
+		minPitch <- praat("Get minimum...", input=FullPath(pitchname), arguments=list(stparse, etparse, "Hertz", "Parabolic"))
+		maxPitch <- praat("Get maximum...", input=FullPath(pitchname), arguments=list(stparse, etparse, "Hertz", "Parabolic"))
+		
+		#TODO: getting actual number values for pitch, error checking for --undefined--
         
 		stparse <- round(stparse, digits=10)
 		etparse <- round(etparse, digits=10)
 		
-        
         #TODO: Change line to row or column
 		if (guise == "spanish"){
-            line <- c(guise, soundlabel, stparse, etparse, precedingsegment, followingsegment, f1, f2)
+            line <- c(guise, soundlabel, stparse, etparse, precedingsegment, followingsegment, f1, f2, meanPitch, minPitch, maxPitch)
 		} else if (guise == "spanish_plain"){
-            line <- c(guise, soundlabel, stparse, etparse, precedingsegment, followingsegment, f1, f2)
+            line <- c(guise, soundlabel, stparse, etparse, precedingsegment, followingsegment, f1, f2, meanPitch, minPitch, maxPitch)
 		} else {
-            line <- c(guise, soundlabel, stparse, etparse, precedingsegment, followingsegment, f1, f2, wordlabel)
+            line <- c(guise, soundlabel, stparse, etparse, precedingsegment, followingsegment, f1, f2, meanPitch, minPitch, maxPitch, wordlabel)
 		}
         
         #end if false
