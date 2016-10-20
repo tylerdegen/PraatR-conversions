@@ -1,3 +1,10 @@
 source("/home/degen/projects/PraatR-conversions/conversions/MAVPOL.R")
 ls
 ls()
+source("MAVPOL.R")
+install.packages(pkgs="/Users/MyUsername/Desktop/PraatR/", repos=NULL, type="source")
+install.packages(pkgs="/home/degen.19/Downloads/PraatR/", repos=NULL, type="source")
+source("MAVPOL.R")
+install.packages(pkgs="/home/degen.19/Downloads/PraatR-2.3/", repos=NULL, type="source")
+source("MAVPOL.R")
+source("MAVPOL.R")

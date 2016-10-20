@@ -3,7 +3,7 @@ library(jsonlite)
 
 #Sets fullpath of the file for R consistency
 FullPath = function(FileName){
-DataDirectory = "/home/degen/projects/PraatR-conversions/conversions/"
+DataDirectory = "/home/degen.19/projects/PraatR-conversions/conversions/"
 #TODO find where I set it in the praat tutorial on SYSdev
 return( paste(DataDirectory,FileName,sep="") )
 }
