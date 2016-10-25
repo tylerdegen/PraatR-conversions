@@ -39,17 +39,8 @@ if (guise == "spanish"){
 columns <- length(header)
 #TODO: error if zero length header?
 
-#fileappend writes header to datafile
-#write.table(header, file = FullPath(datafile), quote = TRUE, append = FALSE, sep="\t", col.names = TRUE)
-#NOTE! append=FALSE OVERWRITES what was there originally, BE CAREFUL
-#write(header, file=FullPath(datafile), append = FALSE, sep="\t", ncol=columns)
-
-#need to transpose and convert to matrix
-#header_mt <- as.matrix(t(columns))
-
 filename_fortable <- FullPath(datafile)
 #TODO: Will we need something header esque for the JSON database?
-#write.table(header, file=filename_fortable, append=FALSE, quote = TRUE, sep="\t", row.names=FALSE, col.names=FALSE)
 JSONheader <- toJSON(header)
 cat(JSONheader, file=FullPath(datafile), fill=TRUE, append=FALSE)
 
@@ -72,7 +63,6 @@ pitchname <- paste(filename, ".pitch", sep="")
 praat( "To Formant (burg)...", input=FullPath(toread), output=FullPath(formantname), arguments=list(0,5,topFormant,0.025,50), overwrite=TRUE)
 
 #Create the pitch objects
-#praat("To Pitch (ac)...", input=FullPath(toread), output=FullPath(pitchname), arguments=list(0, 75, 15, 1, 0.03, 0.45, 0.01, 0.35, 0.14, 600))
 praat( "To Pitch (ac)...", input=FullPath(toread), output=FullPath(pitchname), arguments=list(0, 75, 15, "yes", 0.03, 0.45, 0.01, 0.35, 0.14, 600), overwrite=TRUE)
 
 
@@ -132,7 +122,7 @@ for(i in 1:numberofsegments){
         f2 <- praat("Get value at time...", input=FullPath(formantname), arguments=list(2, mid, "Hertz", "Linear"))
         
         # Fix any undefined formants by checking right next to it, or assigning NA
-        ##undefined in praat is currently printing out as --undefined--, so try comparing against the string of that value
+        ##undefined in praat is currently printing out as --undefined--, so compare against the string of that value
 
 		if (f1 == "--undefined--"){
 			f1 <- praat("Get value at time...", input=FullPath(formantname), arguments=list(1, mid+10, "Hertz", "Linear"))
@@ -151,7 +141,6 @@ for(i in 1:numberofsegments){
 		}
         
         #f1 and f2 are returned with Hertz tag as strings, need to strip them and make nums
-        #TODO: just make it f1 and f2 instead of f1parse and f2parse
         #truncate f1 to hundreths precision
         if (f1 != "--undefined--" || "NA"){
             f1 <- as.numeric(gsub("[^[:digit:].]", "\\1", f1))
@@ -162,9 +151,7 @@ for(i in 1:numberofsegments){
             f2 <- round(f1, digits=2)
         }
 
-        #no good way to comment out code in R so going to use if(FALSE)
-        #if (FALSE){
-            #begin if false
+        #no good way to comment out code in R, use if(FALSE) if needed
             
         #PITCH EXTRACTION
 		meanPitch <- praat("Get mean...", input=FullPath(pitchname), arguments=list(stparse, etparse, "Hertz"))
@@ -187,17 +174,8 @@ for(i in 1:numberofsegments){
             line <- c(guise, soundlabel, stparse, etparse, precedingsegment, followingsegment, f1, f2, meanPitch, minPitch, maxPitch, wordlabel)
 		}
         
-        #end if false
-        #}
-        
-		#TODO: appendFileLine(datafile, line)
-        #write(line, file=FullPath(datafile), append = TRUE, sep="\t", ncol=columns)
         filename_fortable <- FullPath(datafile)
         JSONline <- toJSON(line)
-        #write.table(line, file=filename_fortable, append=TRUE, quote = TRUE, sep="\t", eol="\n", row.names=FALSE, col.names=FALSE)
-        #change write.table to something that writes as just a line
-        #or just instead of printing to file, create a dataframe with these columns, and then each line is a row in the dataframe
-        #then write.table the whole dataframe and it should come out
         cat(JSONline, file=FullPath(datafile), fill=TRUE, append=TRUE)
 		
 	}
