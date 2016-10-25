@@ -94,7 +94,7 @@ for(i in 1:numberofsegments){
 		j <- praat("Get label of interval...", input=FullPath(textgridname), arguments=list(2,mid))
         cat("J: ", j, "\n")
         #TODO: I think this one doesn't like wordlabel being a string and therefore crashes? come back to this one
-        #wordlabel <- praat("Get label of interval...", input=FullPath(textgridname), arguments=list(2,j))
+        wordlabel <- praat("Get label of interval...", input=FullPath(textgridname), arguments=list(2,j))
 		
 		precedingsegment <- "NA"
 		followingsegment <- "NA"
